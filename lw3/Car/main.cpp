@@ -69,11 +69,9 @@ void ProcessCommand(const std::string& command, Car& car)
             std::cout << "Engine turned off\n\n";
             break;
         case CommandType::SetGear:
-            // "SetGear" занимает 7 символов + пробел, поэтому offset = 8
             HandleCommandWithInt(command, 8, &Car::SetGear, car);
             break;
         case CommandType::SetSpeed:
-            // "SetSpeed" занимает 8 символов + пробел, поэтому offset = 9
             HandleCommandWithInt(command, 9, &Car::SetSpeed, car);
             break;
         case CommandType::Exit:
