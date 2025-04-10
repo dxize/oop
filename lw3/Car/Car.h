@@ -14,8 +14,8 @@ public:
     void SetSpeed(int speed);
     void Info();
 private:
-    const int m_MaxGear = 5;
-    const int m_MinGear = -1;
+    const int m_MAX_GEAR = 5;
+    const int m_MIN_GEAR = -1;
     int m_speed = 0;
     int m_gear = 0;
     std::string m_direction = "standing still";

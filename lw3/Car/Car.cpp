@@ -53,7 +53,7 @@ void Car::TurnOffEngine()
 
 void Car::SetGear(int gear)
 {
-    if (gear < m_MinGear || gear > m_MaxGear)
+    if (gear < m_MIN_GEAR || gear > m_MAX_GEAR)
     {
         throw std::runtime_error("Invalid gear");
     }
