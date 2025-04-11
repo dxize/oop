@@ -3,6 +3,7 @@
 #include <string>
 #include <stdexcept>
 #include <cstdlib>
+#include <functional>
 #include "Car.h"
 
 bool TryParseInt(const std::string& str, int& outValue)
@@ -12,14 +13,14 @@ bool TryParseInt(const std::string& str, int& outValue)
     return !(iss.fail() || !iss.eof());
 }
 
-void HandleCommandWithInt(const std::string& command, size_t offset, void (Car::* action)(int), Car& car)
+void HandleCommandWithInt(const std::string& command, size_t offset, const std::function<void(int)>& action)
 {
     int value;
     if (!TryParseInt(command.substr(offset), value))
     {
         throw std::runtime_error("Invalid command argument");
     }
-    (car.*action)(value);
+    action(value);
 }
 
 enum class CommandType {
@@ -69,10 +70,10 @@ void ProcessCommand(const std::string& command, Car& car)
             std::cout << "Engine turned off\n\n";
             break;
         case CommandType::SetGear:
-            HandleCommandWithInt(command, 8, &Car::SetGear, car);
+            HandleCommandWithInt(command, 8, [&car](int gear) { car.SetGear(gear); });
             break;
         case CommandType::SetSpeed:
-            HandleCommandWithInt(command, 9, &Car::SetSpeed, car);
+            HandleCommandWithInt(command, 9, [&car](int speed) { car.SetSpeed(speed); });
             break;
         case CommandType::Exit:
             std::exit(0);

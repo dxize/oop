@@ -1,11 +1,17 @@
 #pragma once
 #include <string>
 
+enum class Direction {
+    StandingStill,
+    Forward,
+    Backward
+};
+
 class Car
 {
 public:
     bool IsTurnedOn();
-    std::string GetDirection();
+    std::string GetDirection() const;
     int GetSpeed();
     int GetGear();
     void TurnOnEngine();
@@ -18,8 +24,10 @@ private:
     const int m_MIN_GEAR = -1;
     int m_speed = 0;
     int m_gear = 0;
-    std::string m_direction = "standing still";
+    Direction m_direction = Direction::StandingStill;
     bool m_isTurnedOn = false;
 
     void SetDirection();
+
+    std::string DirectionToString(Direction d) const;
 };

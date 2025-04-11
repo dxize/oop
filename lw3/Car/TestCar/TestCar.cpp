@@ -70,6 +70,15 @@ TEST_CASE("Переключение передач", "[Car]") {
         car.SetSpeed(0);
         REQUIRE_NOTHROW(car.SetGear(-1));
     }
+
+    //Добавил после ревью
+    SECTION("Переключение с задней передачи на нейтральную следом на переденюю на скорости") {
+        car.TurnOnEngine();
+        car.SetGear(-1);
+        car.SetSpeed(10);
+        car.SetGear(0);
+        REQUIRE_THROWS_WITH(car.SetGear(1), "Cannot reverse while moving");
+    }
 }
 
 TEST_CASE("Изменение скорости", "[Car]") {
@@ -126,6 +135,16 @@ TEST_CASE("Определение направления движения", "[Car]") {
         car.TurnOnEngine();
         car.SetGear(-1);
         REQUIRE_NOTHROW(car.SetSpeed(15));
+        REQUIRE(car.GetDirection() == "backward");
+    }
+
+    //Добавил после ревью
+    SECTION("Перключение с задней передачи на нейтраль при уменьшении скорости для проверки верного отображения ротации направления движения") {
+        car.TurnOnEngine();
+        car.SetGear(-1);
+        car.SetSpeed(10);
+        car.SetGear(0);
+        car.SetSpeed(8);
         REQUIRE(car.GetDirection() == "backward");
     }
 }
