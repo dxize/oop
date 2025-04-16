@@ -5,7 +5,6 @@ class Variable
 public:
 	Variable(const std::string& name) : m_name(name), m_value(NAN), m_found(true) {}
 
-	//  онструктор дл€ "незаданной" (не найденной) переменной
 	Variable() : m_name("ѕеременна€ не найдена"), m_value(NAN), m_found(false) {}
 
 	double GetValue()

@@ -134,4 +134,130 @@ TEST_CASE("Функция Evaluate", "[calculator]") {
     }
 }
 
+TEST_CASE("PrintVars: пустой список переменных", "[calculator][printvars]") {
+    Calc calc;
+    REQUIRE(calc.SortVars() == "");
+}
+
+TEST_CASE("PrintVars: вывод переменных отсортированных по алфавиту", "[calculator][printvars]") {
+    Calc calc;
+    calc.SetLet("z", "100");
+    calc.SetLet("a", "50");
+    calc.SetLet("m", "25");
+
+    // Ожидаемый порядок: a, m, z
+    // Значения выводятся с точностью 2 знака после запятой.
+    std::string expected =
+        "a:50.00\n"
+        "m:25.00\n"
+        "z:100.00\n";
+
+    REQUIRE(calc.SortVars() == expected);
+}
+
+TEST_CASE("PrintVars: вывод переменной с неопределённым значением (nan)", "[calculator][printvars]") {
+    Calc calc;
+    // Объявляем переменную без присвоения значения
+    // Предположим, что до установки значения переменной значение равно NAN.
+    calc.SetVar("x");
+    std::string expected = "x:nan\n";
+    // При сравнении нужно учитывать, что вывод "nan" регистрозависимый (обычно используется именно "nan")
+    REQUIRE(calc.SortVars() == expected);
+}
+
+TEST_CASE("PrintFns: пустой список функций", "[calculator][printfns]") {
+    Calc calc;
+    // Если функций не объявлено, то SortFns() должна вернуть пустую строку
+    REQUIRE(calc.SortFns() == "");
+}
+
+TEST_CASE("PrintFns: вывод функций отсортированных по алфавиту", "[calculator][printfns]") {
+    Calc calc;
+
+    // Создаем переменные для использования в функциях
+    calc.SetLet("a", "10");
+    calc.SetLet("b", "20");
+    calc.SetLet("c", "5");
+
+    // Объявляем функции с операциями, которые при вычислении дают конкретные значения
+    // Например: diff = a - c => 5, sum = a + b => 30.
+    calc.SetFn("diff", "a - c");
+    calc.SetFn("sum", "a + b");
+
+    // Ожидаемый порядок по алфавиту: diff, sum
+    // diff: 10 - 5 = 5, sum: 10 + 20 = 30.
+    std::string expected =
+        "diff:5.00\n"
+        "sum:30.00\n";
+
+    REQUIRE(calc.SortFns() == expected);
+}
+
+TEST_CASE("PrintFns: функция с неопределённым значением (nan)", "[calculator][printfns]") {
+    Calc calc;
+
+    // Создаем функцию, которая, например, делит на ноль.
+    calc.SetLet("a", "10");
+    calc.SetLet("b", "0");
+    calc.SetFn("div", "a / b");  // При делении на ноль Evaluate("div") возвращает NAN.
+
+    std::string expected = "div:nan\n";
+    REQUIRE(calc.SortFns() == expected);
+}
+
+TEST_CASE("Ошибка: недопустимый идентификатор в SetVar", "[calculator][errors]") {
+    Calc calc;
+    // Попытка задать имя, начинающееся с цифры – недопустимо
+    REQUIRE_THROWS_WITH(calc.SetVar("1invalid"), "Invalid usage");
+}
+
+TEST_CASE("Ошибка: недопустимый идентификатор в SetLet", "[calculator][errors]") {
+    Calc calc;
+    // Попытка задать имя, начинающееся с цифры, в команде let – недопустимо.
+    // Здесь имя не должно использоваться как функция, поэтому ожидается ошибка "Invalid usage".
+    REQUIRE_THROWS_WITH(calc.SetLet("2var", "100"), "Invalid usage");
+}
+
+TEST_CASE("Ошибка: использование имени функции в SetLet", "[calculator][errors]") {
+    Calc calc;
+    // Создаем переменную для корректного создания функции
+    calc.SetLet("x", "10");
+    // Создаем функцию с именем "f" (функция f = x)
+    calc.SetFn("f", "x");
+    // Теперь попытка использовать имя "f" в SetLet должна вызвать ошибку
+    REQUIRE_THROWS_WITH(calc.SetLet("f", "20"), "Name already exists");
+}
+
+TEST_CASE("Ошибка: использование необъявленной переменной в SetLet", "[calculator][errors]") {
+    Calc calc;
+    // Попытка присвоить значение переменной через другое имя, которого не существует
+    // Ожидаем сообщение "Name does not exist"
+    REQUIRE_THROWS_WITH(calc.SetLet("a", "b"), "Name does not exist");
+}
+
+TEST_CASE("Ошибка: использование необъявленного идентификатора в SetFn", "[calculator][errors]") {
+    Calc calc;
+    // Здесь пытаемся создать функцию, выражение которой ссылается на несуществующие идентификаторы.
+    // Например, идентификаторы "x" и "y" не объявлены.
+    REQUIRE_THROWS_WITH(calc.SetFn("f", "x + y"), "Name does not exist");
+}
+
+TEST_CASE("Ошибка: попытка создания функции с уже используемым именем", "[calculator][errors]") {
+    Calc calc;
+    // Сначала задаем переменную с именем "v"
+    calc.SetLet("v", "10");
+    // Попытка создать функцию с именем "v" (имя уже используется для переменной)
+    // должна сгенерировать ошибку "Name already exists"
+    REQUIRE_THROWS_WITH(calc.SetFn("v", "x + y"), "Name already exists");
+}
+
+TEST_CASE("Ошибка: создание функции с неверным числом аргументов", "[calculator][errors]") {
+    Calc calc;
+
+    calc.SetLet("a", "10");
+    calc.SetLet("b", "20");
     
+    REQUIRE_THROWS_WITH(calc.SetFn("f1", "+"), "Invalid usage");
+
+    REQUIRE_THROWS_WITH(calc.SetFn("f2", "a + b + a"), "Invalid usage");
+}
