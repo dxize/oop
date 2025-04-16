@@ -17,7 +17,7 @@ Variable& Calc::GetVar(const std::string& name)
 	}
 	else
 	{
-		static Variable dummy; // та самая "пустая" переменная ГЛЯНУТЬ ЧТО ЭТО!!!!
+		static Variable dummy; 
 		return dummy;
 	}
 }

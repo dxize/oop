@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="lw1\replace.cpp" />
+    <ClCompile Include="replace.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lw1\stdafx.h" />
