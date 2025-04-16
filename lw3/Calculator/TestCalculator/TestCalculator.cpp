@@ -45,8 +45,8 @@ TEST_CASE("Класс Функций", "[calculator]") {
 
     SECTION("Создание функции и присвоение ей несуществующей переменной") {
         std::string name1 = "arg1";
-        std::string name2 = "arg2";
-        REQUIRE_THROWS_WITH(calc.SetFn(name1, name2), "Name does not exist");
+        std::string value = "arg2";
+        REQUIRE_THROWS_WITH(calc.SetFn(name1, value), "Name does not exist");
     }
 
     SECTION("Создание функции и присвоение ей выражение") {
@@ -58,5 +58,15 @@ TEST_CASE("Класс Функций", "[calculator]") {
         REQUIRE(calc.GetFn(name1).GetVars()[0] == "arg2");
         REQUIRE(calc.GetFn(name1).GetVars()[1] == "arg3");
         REQUIRE(calc.GetFn(name1).GetSign() == "+");
+    }
+
+    SECTION("Создание функции, которая ранее была создана") {
+        std::string name1 = "arg1";
+        std::string value1 = "arg2 + arg3";
+        std::string value2 = "arg4";
+        calc.SetVar("arg2");
+        calc.SetVar("arg3");
+        calc.SetFn(name1, value1);
+        REQUIRE_THROWS_WITH(calc.SetFn(name1, value2), "Name already exists");
     }
 }
