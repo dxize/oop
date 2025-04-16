@@ -15,6 +15,10 @@ public:
 
 	void SetFn(const std::string& name, const std::string& value);
 	Function& GetFn(const std::string& name);
+
+	double Evaluate(const std::string& name);
+	std::string PrintVars();
+	std::string PrintFn();
 private:
 	std::unordered_map<std::string, Variable> m_variables;
 	std::unordered_map<std::string, Function> m_functions;

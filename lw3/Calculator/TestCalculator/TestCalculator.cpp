@@ -70,3 +70,68 @@ TEST_CASE("Класс Функций", "[calculator]") {
         REQUIRE_THROWS_WITH(calc.SetFn(name1, value2), "Name already exists");
     }
 }
+
+TEST_CASE("Функция Evaluate", "[calculator]") {
+    Calc calc;
+
+    SECTION("Вычисление значения переменной") {
+        calc.SetLet("x", "10");
+        REQUIRE(calc.Evaluate("x") == Approx(10.0));
+    }
+
+    SECTION("Вычисление значения функции с одной переменной") {
+        calc.SetLet("x", "5");
+        calc.SetFn("f", "x");
+        REQUIRE(calc.Evaluate("f") == Approx(5.0));
+    }
+
+    SECTION("Вычисление значения функции с двумя переменными (сложение)") {
+        calc.SetLet("a", "3");
+        calc.SetLet("b", "7");
+        calc.SetFn("sum", "a + b");
+        REQUIRE(calc.Evaluate("sum") == Approx(10.0));
+    }
+
+    SECTION("Вычисление значения функции с двумя переменными (вычитание)") {
+        calc.SetLet("a", "10");
+        calc.SetLet("b", "4");
+        calc.SetFn("sub", "a - b");
+        REQUIRE(calc.Evaluate("sub") == Approx(6.0));
+    }
+
+    SECTION("Вычисление значения функции с двумя переменными (умножение)") {
+        calc.SetLet("a", "2");
+        calc.SetLet("b", "3");
+        calc.SetFn("mul", "a * b");
+        REQUIRE(calc.Evaluate("mul") == Approx(6.0));
+    }
+
+    SECTION("Вычисление значения функции с двумя переменными (деление)") {
+        calc.SetLet("a", "10");
+        calc.SetLet("b", "2");
+        calc.SetFn("div", "a / b");
+        REQUIRE(calc.Evaluate("div") == Approx(5.0));
+    }
+
+    SECTION("Деление на ноль должно вернуть NAN") {
+        calc.SetLet("a", "10");
+        calc.SetLet("b", "0");
+        calc.SetFn("div", "a / b");
+        REQUIRE(std::isnan(calc.Evaluate("div")));
+    }
+
+    SECTION("Вычисление функции с аргументами-функциями") {
+        calc.SetLet("a", "2");
+        calc.SetLet("b", "3");
+        calc.SetFn("f1", "a + b");        // f1 = 5
+        calc.SetLet("c", "4");
+        calc.SetFn("f2", "f1 * c");       // f2 = 5 * 4 = 20
+        REQUIRE(calc.Evaluate("f2") == Approx(20.0));
+    }
+
+    SECTION("Неопределённое значение должно вернуть NAN") {
+        REQUIRE(std::isnan(calc.Evaluate("not_exist")));
+    }
+}
+
+    

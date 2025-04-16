@@ -99,7 +99,7 @@ void Calc::ParseFnExpression(const std::string& name, const std::string& value,
                 continue;
             }
 
-            if (!GetVar(word).IsFound()) {
+            if (!GetVar(word).IsFound() && !GetFn(word).IsFound()) {
                 throw std::runtime_error("Name does not exist");
             }
 
@@ -131,4 +131,33 @@ void Calc::SetFn(const std::string& name, const std::string& value)
 
     GetFn(name).SetVars(variables);
 
+}
+
+double Calc::Evaluate(const std::string& name)
+{
+    if (GetVar(name).IsFound())
+    {
+        return GetVar(name).GetValue();
+    }
+    else if (GetFn(name).IsFound())
+    {
+        std::vector<std::string> args = GetFn(name).GetVars();
+        double op1 = Evaluate(args[0]);
+        if (args.size() == 1)
+        {
+            return op1;
+        }
+
+        double op2 = Evaluate(args[1]);
+
+        if (std::isnan(op1) || std::isnan(op2)) return NAN;
+
+        std::string sign = GetFn(name).GetSign();
+        if (sign == "+") return op1 + op2;
+        if (sign == "-") return op1 - op2;
+        if (sign == "*") return op1 * op2;
+        if (sign == "/") return op2 != 0 ? op1 / op2 : NAN;
+    }
+
+    return NAN;
 }
