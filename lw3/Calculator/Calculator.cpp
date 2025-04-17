@@ -9,11 +9,12 @@
 #include <cctype>
 #include <cmath>
 
-bool Calc::isValidIdentifier(const std::string& id) {
+bool Calc::IsValidIdentifier(const std::string& id) {
     if (id.empty()) return false;
     if (!(std::isalpha(id[0]) || id[0] == '_'))
         return false;
-    for (char c : id) {
+    for (char c : id) 
+    {
         if (!(std::isalnum(c) || c == '_'))
             return false;
     }
@@ -22,7 +23,7 @@ bool Calc::isValidIdentifier(const std::string& id) {
 
 void Calc::SetVar(const std::string& name)
 {
-    if (!isValidIdentifier(name))
+    if (!IsValidIdentifier(name))
         throw std::runtime_error("Invalid usage");
 
     if (GetFn(name).IsFound())
@@ -50,7 +51,7 @@ Variable& Calc::GetVar(const std::string& name)
 
 void Calc::SetLet(const std::string& name, const std::string& value)
 {
-    if (!isValidIdentifier(name))
+    if (!IsValidIdentifier(name))
         throw std::runtime_error("Invalid usage");
 
     if (GetFn(name).IsFound())
@@ -61,19 +62,24 @@ void Calc::SetLet(const std::string& name, const std::string& value)
     double val;
     std::size_t pos;
   
-    try {
+    try 
+    {
         val = std::stod(value, &pos);
         if (pos != value.size())
             throw std::invalid_argument("not full parse");
     }
-    catch (...) {
-        if (GetVar(value).IsFound()) {
+    catch (...) 
+    {
+        if (GetVar(value).IsFound()) 
+        {
             val = GetVar(value).GetValue();
         }
-        else if (GetFn(value).IsFound()) {
+        else if (GetFn(value).IsFound()) 
+        {
             val = Evaluate(value);
         }
-        else {
+        else 
+        {
             throw std::runtime_error("Name does not exist");
         }
     }
@@ -98,7 +104,7 @@ Function& Calc::GetFn(const std::string& name)
 
 bool Calc::EnsureFnExists(const std::string& name, std::vector<std::string>& variables, const std::string& sign)
 {
-    if (!isValidIdentifier(name))
+    if (!IsValidIdentifier(name))
     {
         throw std::runtime_error("Invalid usage");
     }
@@ -117,38 +123,47 @@ void Calc::ParseFnExpression(const std::string& name, const std::string& value,
 {
     std::string expr;
     expr.reserve(value.size() * 2);
-    for (char ch : value) {
-        if (ch == '+' || ch == '-' || ch == '*' || ch == '/') {
+    for (char ch : value) 
+    {
+        if (ch == '+' || ch == '-' || ch == '*' || ch == '/') 
+        {
             expr.push_back(' ');
             expr.push_back(ch);
             expr.push_back(' ');
         }
-        else {
+        else 
+        {
             expr.push_back(ch);
         }
     }
     std::istringstream stream(expr);
     std::string word;
 
-    if (!EnsureFnExists(name, variables, sign)) {
-        while (stream >> word) {
-            // ≈сли это оператор
-            if (word.size() == 1 && (word == "+" || word == "-" || word == "*" || word == "/")) {
+    if (!EnsureFnExists(name, variables, sign)) 
+    {
+        while (stream >> word) 
+        {
+          
+            if (word.size() == 1 && (word == "+" || word == "-" || word == "*" || word == "/")) 
+            {
                 sign = word;
                 continue;
             }
-            // »наче Ч должно быть им€ ранее объ€вленной переменной или функции
-            if (!GetVar(word).IsFound() && !GetFn(word).IsFound()) {
+            
+            if (!GetVar(word).IsFound() && !GetFn(word).IsFound()) 
+            {
                 throw std::runtime_error("Name does not exist");
             }
             variables.push_back(word);
         }
     }
-    else {
+    else 
+    {
         throw std::runtime_error("Name already exists");
     }
 
-    if (variables.empty() || variables.size() > 2) {
+    if (variables.empty() || variables.size() > 2) 
+    {
         throw std::runtime_error("Invalid usage");
     }
 
@@ -169,7 +184,8 @@ void Calc::SetFn(const std::string& name, const std::string& value)
     GetFn(name).SetVars(variables);
 }
 
-std::string Calc::SortVars() {
+std::string Calc::SortVars() 
+{
     if (m_variables.empty())
         return "";
 
@@ -195,7 +211,8 @@ std::string Calc::SortVars() {
     return oss.str();
 }
 
-std::string Calc::SortFns() {
+std::string Calc::SortFns() 
+{
     if (m_functions.empty())
         return "";
 

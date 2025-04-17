@@ -7,7 +7,8 @@
 
 enum class Cmd { VAR, LET, FN, PRINT, PRINTVARS, PRINTFNS, EXIT, UNKNOWN };
 
-static Cmd parse(const std::string& s) {
+Cmd parse(const std::string& s) 
+{
     if (s == "var")        return Cmd::VAR;
     if (s == "let")        return Cmd::LET;
     if (s == "fn")         return Cmd::FN;
@@ -15,10 +16,11 @@ static Cmd parse(const std::string& s) {
     if (s == "printvars")  return Cmd::PRINTVARS;
     if (s == "printfns")   return Cmd::PRINTFNS;
     if (s == "exit")       return Cmd::EXIT;
-    return Cmd::UNKNOWN;
+        return Cmd::UNKNOWN;
 }
 
-static std::string trim(const std::string& s) {
+std::string trim(const std::string& s) 
+{
     auto lb = s.find_first_not_of(" \t\r\n");
     if (lb == std::string::npos) return "";
     auto rb = s.find_last_not_of(" \t\r\n");
@@ -31,8 +33,10 @@ bool HandleCommand(const std::string& line, Calc& calc) {
     if (!(in >> kw))
         return true;  // пустая строка, продолжаем цикл
 
-    switch (parse(kw)) {
-    case Cmd::VAR: {
+    switch (parse(kw)) 
+    {
+    case Cmd::VAR: 
+    {
         std::string rest;
         std::string id;
         in >> id;
@@ -41,7 +45,8 @@ bool HandleCommand(const std::string& line, Calc& calc) {
         break;
     }
 
-    case Cmd::LET: {
+    case Cmd::LET: 
+    {
         std::string rest;
         std::getline(in, rest);
         auto pos = rest.find('=');
@@ -55,7 +60,8 @@ bool HandleCommand(const std::string& line, Calc& calc) {
         break;
     }
 
-    case Cmd::FN: {
+    case Cmd::FN: 
+    {
         std::string rest;
         std::getline(in, rest);
         auto pos = rest.find('=');
@@ -69,24 +75,28 @@ bool HandleCommand(const std::string& line, Calc& calc) {
         break;
     }
 
-    case Cmd::PRINT: {
+    case Cmd::PRINT: 
+    {
         std::string rest;
         std::getline(in, rest);
         std::string id = trim(rest);
         if (id.empty()) throw std::runtime_error("Invalid usage");
 
         double v;
-        if (calc.GetVar(id).IsFound()) {
+        if (calc.GetVar(id).IsFound()) 
+        {
             v = calc.GetVar(id).GetValue();
         }
-        else if (calc.GetFn(id).IsFound()) {
+        else if (calc.GetFn(id).IsFound()) 
+        {
             v = calc.Evaluate(id);
         }
         else {
             throw std::runtime_error("Name does not exist");
         }
 
-        if (std::isnan(v)) {
+        if (std::isnan(v)) 
+        {
             std::cout << "nan\n";
         }
         else {
@@ -115,15 +125,19 @@ bool HandleCommand(const std::string& line, Calc& calc) {
     return true;
 }
 
-int main() {
+int main() 
+{
     Calc calc;
     std::string line;
 
-    while (std::getline(std::cin, line)) {
-        try {
+    while (std::getline(std::cin, line)) 
+    {
+        try 
+        {
             if (!HandleCommand(line, calc)) break;
         }
-        catch (const std::runtime_error& e) {
+        catch (const std::runtime_error& e) 
+        {
             std::cout << e.what() << "\n";
         }
     }
