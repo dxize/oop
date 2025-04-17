@@ -122,7 +122,7 @@ void Calc::ParseFnExpression(const std::string& name, const std::string& value,
     std::vector<std::string>& variables, std::string& sign)
 {
     std::string expr;
-    expr.reserve(value.size() * 2);
+ 
     for (char ch : value) 
     {
         if (ch == '+' || ch == '-' || ch == '*' || ch == '/') 

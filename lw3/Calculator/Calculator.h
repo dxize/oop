@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Variable.cpp"
-#include "Functions.cpp"
+#include "Variable.h"
+#include "Functions.h"
 #include <unordered_map>
 #include <string>
 #include <vector>
@@ -26,5 +26,5 @@ private:
 	bool EnsureFnExists(const std::string& name, std::vector<std::string>& variables, const std::string& sign);
 	void ParseFnExpression(const std::string& name, const std::string& value, 
 		std::vector<std::string>& variables, std::string& sign);
-	bool isValidIdentifier(const std::string& id);
+	bool IsValidIdentifier(const std::string& id);
 };

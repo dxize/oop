@@ -1,42 +1,30 @@
 #include <string>
 #include <vector>
+#include "Functions.h"
 
-class Function
+
+bool Function::IsFound() const
 {
-public:
-	Function(const std::string& name, std::vector<std::string>& variables, const std::string& sign) : 
-		m_name(name), m_variables(variables),m_sign(sign), m_found(true) {}
+	return m_found;
+}
 
-	Function() : m_name("Функция не найдена"), m_found(false) {}
+void Function::SetSign(std::string sign)
+{
+	m_sign = sign;
+}
 
-	bool IsFound() const
-	{
-		return m_found;
-	}
+std::string Function::GetSign()
+{
+	return m_sign;
+}
 
-	void SetSign(std::string sign)
-	{
-		m_sign = sign;
-	}
+void Function::SetVars(std::vector<std::string> variables)
+{
+	m_variables = variables;
+}
 
-	std::string GetSign()
-	{
-		return m_sign;
-	}
+std::vector<std::string> Function::GetVars()
+{
+	return m_variables;
+}
 
-	void SetVars(std::vector<std::string> variables)
-	{
-		m_variables = variables;
-	}
-
-	std::vector<std::string> GetVars()
-	{
-		return m_variables;
-	}
-
-private:
-	std::string m_name;
-	std::string m_sign;
-	std::vector<std::string> m_variables;
-	bool m_found;
-};
