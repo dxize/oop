@@ -1,6 +1,4 @@
 ﻿  Calculator.cpp
-  TestCalculator.cpp
-  Создание кода...
 C:\Users\gimps\oop\lw3\Calculator\Calculator.cpp(108,1): warning C4715: Calc::GetFn: значение возвращается не при всех путях выполнения
 C:\Users\gimps\oop\lw3\Calculator\Calculator.cpp(58,1): warning C4715: Calc::GetVar: значение возвращается не при всех путях выполнения
   TestCalculator.vcxproj -> C:\Users\gimps\oop\lw3\Calculator\x64\Debug\TestCalculator.exe

@@ -241,3 +241,57 @@ TEST_CASE("Ошибка: создание функции с неверным числом аргументов", "[calculator]
 
     REQUIRE_THROWS_WITH(calc.SetFn("f2", "a + b + a"), "Invalid usage");
 }
+
+
+//добавил
+TEST_CASE("Ошибка: пустое имя переменной в SetVar", "[calculator][errors]") {
+    Calc calc;
+    REQUIRE_THROWS_WITH(calc.SetVar(""), "Invalid usage");
+}
+
+TEST_CASE("Ошибка: пробелы в имени переменной в SetVar", "[calculator][errors]") {
+    Calc calc;
+    REQUIRE_THROWS_WITH(calc.SetVar("a b"), "Invalid usage");
+}
+
+TEST_CASE("Ошибка: недопустимый символ в имени переменной", "[calculator][errors]") {
+    Calc calc;
+    REQUIRE_THROWS_WITH(calc.SetVar("var!"), "Invalid usage");
+}
+
+TEST_CASE("Ошибка: пустое имя в SetLet", "[calculator][errors]") {
+    Calc calc;
+    REQUIRE_THROWS_WITH(calc.SetLet("", "123"), "Invalid usage");
+}
+
+TEST_CASE("Ошибка: SetLet с недопустимым rhs (нечисло и неидентификатор)", "[calculator][errors]") {
+    Calc calc;
+    REQUIRE_THROWS_WITH(calc.SetLet("x", "@@@"), "Name does not exist");
+}
+
+TEST_CASE("Ошибка: SetFn с пустым выражением", "[calculator][errors]") {
+    Calc calc;
+    REQUIRE_THROWS_WITH(calc.SetFn("h", ""), "Invalid usage");
+}
+
+TEST_CASE("Ошибка: SetFn с лишними пробелами в имени", "[calculator][errors]") {
+    Calc calc;
+    calc.SetLet("a", "1");
+    REQUIRE_THROWS_WITH(calc.SetFn(" badName", "a"), "Invalid usage");
+}
+
+TEST_CASE("Ошибка: SetFn с числовым именем", "[calculator][errors]") {
+    Calc calc;
+    calc.SetLet("a", "1");
+    REQUIRE_THROWS_WITH(calc.SetFn("1fn", "a"), "Invalid usage");
+}
+
+TEST_CASE("Ошибка: alias-переменная на функцию и затем переопределение", "[calculator][errors]") {
+    Calc calc;
+    calc.SetLet("x", "1");
+    calc.SetFn("f", "x");
+    // правильно делегируем на f
+    calc.SetLet("y", "f");
+    // но переопределить f через let нельзя
+    REQUIRE_THROWS_WITH(calc.SetLet("f", "y"), "Name already exists");
+}

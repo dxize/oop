@@ -107,72 +107,62 @@ Function& Calc::GetFn(const std::string& name)
     }
 }
 
-bool Calc::EnsureFnExists(const std::string& name, std::vector<std::string>& variables, const std::string& sign)
+bool Calc::EnsureFnExists(const std::string& name)
 {
     if (!IsValidIdentifier(name))
-    {
         throw std::runtime_error("Invalid usage");
-    }
-    
     if (HasVar(name) || HasFn(name))
-    {
         throw std::runtime_error("Name already exists");
-    }
-
-    m_functions.emplace(name, Function(name, variables, sign));
-    return false;
+    return true;
 }
 
-void Calc::ParseFnExpression(const std::string& name, const std::string& value,
-    std::vector<std::string>& variables, std::string& sign)
+void Calc::ParseFnExpression(const std::string& name,
+    const std::string& value,
+    std::vector<std::string>& variables,
+    std::string& sign)
 {
+    
+    EnsureFnExists(name);
+
     std::string expr;
- 
-    for (char ch : value) 
-    {
+    for (char ch : value) {
         if (ch == '+' || ch == '-' || ch == '*' || ch == '/') 
         {
-            expr.push_back(' ');
-            expr.push_back(ch);
-            expr.push_back(' ');
+            expr += ' '; 
+            expr += ch; 
+            expr += ' ';
         }
-        else 
-        {
-            expr.push_back(ch);
+        else {
+            expr += ch;
         }
     }
     std::istringstream stream(expr);
     std::string word;
 
-    if (!EnsureFnExists(name, variables, sign)) 
-    {
-        while (stream >> word) 
+    while (stream >> word) {
+        if (word.size() == 1)
         {
-          
-            if (word.size() == 1 && (word == "+" || word == "-" || word == "*" || word == "/")) 
-            {
+            char c = word[0];
+            if (c == '+' || c == '-' || c == '*' || c == '/') {
                 sign = word;
                 continue;
             }
-            
-            if (!HasVar(word) && !HasFn(word))
-            {
-                throw std::runtime_error("Name does not exist");
-            }
-            variables.push_back(word);
         }
-    }
-    else 
-    {
-        throw std::runtime_error("Name already exists");
+
+        if (!HasVar(word) && !HasFn(word)) {
+            throw std::runtime_error("Name does not exist");
+        }
+        variables.push_back(word);
     }
 
-    if (variables.empty() || variables.size() > 2) 
-    {
+
+    if (variables.empty() || variables.size() > 2) {
         throw std::runtime_error("Invalid usage");
     }
 
+    m_functions.emplace(name, Function(name, variables, sign));
 }
+
 
 void Calc::SetFn(const std::string& name, const std::string& value)
 {
