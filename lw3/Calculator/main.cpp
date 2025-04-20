@@ -83,11 +83,11 @@ bool HandleCommand(const std::string& line, Calc& calc) {
         if (id.empty()) throw std::runtime_error("Invalid usage");
 
         double v;
-        if (calc.GetVar(id).IsFound()) 
+        if (calc.HasVar(id))
         {
             v = calc.GetVar(id).GetValue();
         }
-        else if (calc.GetFn(id).IsFound()) 
+        else if (calc.HasFn(id))
         {
             v = calc.Evaluate(id);
         }

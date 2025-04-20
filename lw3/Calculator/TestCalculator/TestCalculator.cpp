@@ -8,6 +8,8 @@
 #include "../Calculator.h"
 
 
+//добавит тесты негативные больше 
+
 TEST_CASE("Класс Переменной", "[calculator]") {
     Calc calc;
 

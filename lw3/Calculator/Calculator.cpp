@@ -21,15 +21,28 @@ bool Calc::IsValidIdentifier(const std::string& id) {
     return true;
 }
 
+bool Calc::HasVar(const std::string& name) const
+{
+    return m_variables.find(name) != m_variables.end();
+}
+
+bool Calc::HasFn(const std::string& name) const
+{
+    return m_functions.find(name) != m_functions.end();
+}
+
+
 void Calc::SetVar(const std::string& name)
 {
+    m_cache.clear();
+
     if (!IsValidIdentifier(name))
         throw std::runtime_error("Invalid usage");
 
-    if (GetFn(name).IsFound())
+    if (HasFn(name))
         throw std::runtime_error("Name already exists");
 
-    if (!GetVar(name).IsFound())
+    if (!HasVar(name))
     {
         m_variables.emplace(name, Variable(name));
     }
@@ -42,19 +55,16 @@ Variable& Calc::GetVar(const std::string& name)
     {
         return variable->second;
     }
-    else
-    {
-        static Variable dummy;
-        return dummy;
-    }
 }
 
 void Calc::SetLet(const std::string& name, const std::string& value)
 {
+    m_cache.clear();
+
     if (!IsValidIdentifier(name))
         throw std::runtime_error("Invalid usage");
 
-    if (GetFn(name).IsFound())
+    if (HasFn(name))
         throw std::runtime_error("Name already exists");
 
     SetVar(name);
@@ -70,15 +80,15 @@ void Calc::SetLet(const std::string& name, const std::string& value)
     }
     catch (...) 
     {
-        if (GetVar(value).IsFound()) 
+        if (HasVar(value))
         {
             val = GetVar(value).GetValue();
         }
-        else if (GetFn(value).IsFound()) 
+        else if (HasFn(value))
         {
             val = Evaluate(value);
         }
-        else 
+        else
         {
             throw std::runtime_error("Name does not exist");
         }
@@ -88,17 +98,12 @@ void Calc::SetLet(const std::string& name, const std::string& value)
 }
 
 
-Function& Calc::GetFn(const std::string& name)
+Function& Calc::GetFn(const std::string& name) 
 {
     auto function = m_functions.find(name);
     if (function != m_functions.end())
     {
         return function->second;
-    }
-    else
-    {
-        static Function dummy;
-        return dummy;
     }
 }
 
@@ -109,7 +114,7 @@ bool Calc::EnsureFnExists(const std::string& name, std::vector<std::string>& var
         throw std::runtime_error("Invalid usage");
     }
     
-    if (GetVar(name).IsFound() || GetFn(name).IsFound())
+    if (HasVar(name) || HasFn(name))
     {
         throw std::runtime_error("Name already exists");
     }
@@ -150,7 +155,7 @@ void Calc::ParseFnExpression(const std::string& name, const std::string& value,
                 continue;
             }
             
-            if (!GetVar(word).IsFound() && !GetFn(word).IsFound()) 
+            if (!HasVar(word) && !HasFn(word))
             {
                 throw std::runtime_error("Name does not exist");
             }
@@ -171,6 +176,8 @@ void Calc::ParseFnExpression(const std::string& name, const std::string& value,
 
 void Calc::SetFn(const std::string& name, const std::string& value)
 {
+    m_cache.clear();
+
     std::vector<std::string> variables;
     std::string sign;
 
@@ -240,30 +247,37 @@ std::string Calc::SortFns()
 
 double Calc::Evaluate(const std::string& name)
 {
-    if (GetVar(name).IsFound())
-    {
-        return GetVar(name).GetValue();
+    
+    auto cache = m_cache.find(name);
+    if (cache != m_cache.end()) {
+        return cache->second;
     }
-    else if (GetFn(name).IsFound())
-    {
-        std::vector<std::string> args = GetFn(name).GetVars();
+
+    double result = NAN;
+    if (HasVar(name)) {
+        result = GetVar(name).GetValue();
+    }
+    else if (HasFn(name)) {
+        auto args = GetFn(name).GetVars();
         double op1 = Evaluate(args[0]);
-        if (args.size() == 1)
-        {
-            return op1;
+        if (args.size() == 1) {
+            result = op1;
         }
-
-        double op2 = Evaluate(args[1]);
-
-        if (std::isnan(op1) || std::isnan(op2))
-            return NAN;
-
-        std::string sign = GetFn(name).GetSign();
-        if (sign == "+") return op1 + op2;
-        if (sign == "-") return op1 - op2;
-        if (sign == "*") return op1 * op2;
-        if (sign == "/") return op2 != 0 ? op1 / op2 : NAN;
+        else {
+            double op2 = Evaluate(args[1]);
+            if (std::isnan(op1) || std::isnan(op2)) {
+                result = NAN;
+            }
+            else {
+                auto sign = GetFn(name).GetSign();
+                if (sign == "+") result = op1 + op2;
+                if (sign == "-") result = op1 - op2;
+                if (sign == "*") result = op1 * op2;
+                if (sign == "/") result = (op2 != 0 ? op1 / op2 : NAN);
+            }
+        }
     }
-
-    return NAN;
+    
+    m_cache[name] = result;
+    return result;
 }

@@ -2,20 +2,14 @@
 #include <vector>
 #include "Functions.h"
 
-
-bool Function::IsFound() const
-{
-	return m_found;
-}
-
 void Function::SetSign(std::string sign)
 {
-	m_sign = sign;
+	m_operation = sign;
 }
 
 std::string Function::GetSign()
 {
-	return m_sign;
+	return m_operation;
 }
 
 void Function::SetVars(std::vector<std::string> variables)
