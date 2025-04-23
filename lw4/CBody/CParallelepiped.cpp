@@ -1,6 +1,7 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include <sstream>
+#include <iomanip>
 #include "CParallelepiped.h"
 
 CParallelepiped::CParallelepiped(double width, double height, double depth, double density)
@@ -25,12 +26,12 @@ double CParallelepiped::GetMass() const
 std::string CParallelepiped::ToString() const 
 {
     std::ostringstream oss;
-    oss << "Parallelepiped: "
-        << "Width = " << m_width << ", "
-        << "Height = " << m_height << ", "
-        << "Depth = " << m_depth << ", "
-        << "Density = " << m_density << ", "
-        << "Volume = " << GetVolume() << ", "
-        << "Mass = " << GetMass();
+    oss << "Parallelepiped:\n\t" << std::fixed << std::setprecision(2)
+        << "Width = " << m_width << "\n\t"
+        << "Height = " << m_height << "\n\t"
+        << "Depth = " << m_depth << "\n\t"
+        << "Density = " << m_density << "\n\t"
+        << "Volume = " << GetVolume() << "\n\t"
+        << "Mass = " << GetMass() << "\n";
     return oss.str();
 }

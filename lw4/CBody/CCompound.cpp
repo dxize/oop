@@ -1,6 +1,7 @@
 #include "CCompound.h"
 #include <sstream>
 #include <stdexcept>
+#include <iomanip>
 
 CCompound::CCompound() = default;
 
@@ -69,9 +70,10 @@ std::string CCompound::ToString() const
         oss << "  - " << body->ToString() << "\n";
     }
 
-    oss << "Total volume = " << GetVolume() << ", "
-        << "Total mass = " << GetMass() << ", "
-        << "Average density = " << GetDensity();
+    oss << std::fixed << std::setprecision(2) 
+        << "Total volume = " << GetVolume() << "\n"
+        << "Total mass = " << GetMass() << "\n"
+        << "Average density = " << GetDensity() << "\n";
 
     return oss.str();
 }

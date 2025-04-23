@@ -1,6 +1,7 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include <sstream>
+#include <iomanip>
 #include "CCylinder.h"
 
 CCylinder::CCylinder(double radius, double height, double density)
@@ -25,11 +26,11 @@ double CCylinder::GetMass() const
 std::string CCylinder::ToString() const 
 {
     std::ostringstream oss;
-    oss << "Cylinder: "
-        << "Radius = " << m_radius << ", "
-        << "Height = " << m_height << ", "
-        << "Density = " << m_density << ", "
-        << "Volume = " << GetVolume() << ", "
-        << "Mass = " << GetMass();
-    return oss.str();
+    oss << "Cylinder:\n\t" << std::fixed << std::setprecision(2)
+        << "Radius = " << m_radius << "\n\t"
+        << "Height = " << m_height << "\n\t"
+        << "Density = " << m_density << "\n\t"
+        << "Volume = " << GetVolume() << "\n\t"
+        << "Mass = " << GetMass() << "\n";
+    return oss.str(); 
 }

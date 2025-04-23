@@ -2,6 +2,7 @@
 #include <cmath>
 #include "CSphere.h"
 #include <sstream>
+#include <iomanip>
 
 CSphere::CSphere(double r, double d)
     : m_radius(r), m_density(d)
@@ -29,10 +30,10 @@ double CSphere::GetMass() const
 std::string CSphere::ToString() const 
 {
     std::ostringstream out;
-    out << "Sphere:\n"
-        << "  radius  = " << m_radius << "\n"
-        << "  density = " << m_density << "\n"
-        << "  volume  = " << GetVolume() << "\n"
-        << "  mass    = " << GetMass();
+    out << "Sphere:\n\t" << std::fixed << std::setprecision(2)
+        << "Radius  = " << m_radius << "\n\t"
+        << "Density = " << m_density << "\n\t"
+        << "Volume  = " << GetVolume() << "\n\t"
+        << "Mass    = " << GetMass() << "\n";
     return out.str();
 }
