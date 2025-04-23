@@ -4,8 +4,7 @@
 #include <sstream>
 #include <iomanip>
 
-CSphere::CSphere(double r, double d)
-    : m_radius(r), m_density(d)
+CSphere::CSphere(double r, double d) : m_radius(r), m_density(d)
 {
     if (r < 0 || d < 0) {
         throw std::invalid_argument("Radius and density must be non-negative");
