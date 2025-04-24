@@ -7,13 +7,11 @@ CCompound::CCompound() = default;
 
 bool CCompound::Contains(const std::shared_ptr<CBody>& target) const
 {
-    // Прямое сравнение this и target
     if (target.get() == this) 
     {
         return true;
     }
 
-    // Рекурсивный поиск среди вложенных тел
     for (const auto& body : m_bodies) 
     {
         auto compound = std::dynamic_pointer_cast<CCompound>(body);

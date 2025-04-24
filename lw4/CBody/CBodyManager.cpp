@@ -8,14 +8,13 @@
 
 void CBodyManager::AddBody(const std::shared_ptr<CBody>& body) 
 {
-    if (!body) 
+    if (body == nullptr) 
     {
         throw std::invalid_argument("Cannot add null body");
     }
     m_bodies.push_back(body);
 }
 
-// Вывести в консоль информацию обо всех телах
 void CBodyManager::PrintAll() const 
 {
     for (const auto& b : m_bodies) 
@@ -24,7 +23,6 @@ void CBodyManager::PrintAll() const
     }
 }
 
-// Найти тело с максимальной массой
 std::shared_ptr<CBody> CBodyManager::FindMaxMass() const 
 {
     if (m_bodies.empty()) 
@@ -38,7 +36,6 @@ std::shared_ptr<CBody> CBodyManager::FindMaxMass() const
     return *it;
 }
 
-// Найти тело с минимальным "весом в воде"
 std::shared_ptr<CBody> CBodyManager::FindMinWeightInWater() const 
 {
     if (m_bodies.empty()) 

@@ -127,6 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CBodyManager.cpp" />
     <ClCompile Include="CCompound.cpp" />
     <ClCompile Include="CCone.cpp" />
     <ClCompile Include="CCylinder.cpp" />
