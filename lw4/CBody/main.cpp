@@ -12,7 +12,7 @@
 #include "CCompound.h"
 #include "CBodyManager.h"
 
-enum class BodyType { Sphere, Parallelepiped, Cone, Cylinder, Compound, Unknown };
+enum class BodyType { Sphere, Parallelepiped, Cone, Cylinder, Compound, AddTo, Unknown };
 
 BodyType parseBodyType(const std::string& s) 
 {
@@ -21,6 +21,7 @@ BodyType parseBodyType(const std::string& s)
     if (s == "Cone")           return BodyType::Cone;
     if (s == "Cylinder")       return BodyType::Cylinder;
     if (s == "Compound")       return BodyType::Compound;
+    if (s == "AddTo")          return BodyType::AddTo;
     return BodyType::Unknown;
 }
 
@@ -31,32 +32,43 @@ std::shared_ptr<CBody> ReadBody(std::istream& in, const std::string& cmd, const 
     case BodyType::Sphere: 
     {
         double r, d; 
-        in >> r >> d;
+        if (!(in >> r >> d)) { 
+            throw std::invalid_argument("error");
+        }
         return std::make_shared<CSphere>(r, d);
     }
     case BodyType::Parallelepiped: 
     {
         double w, h, dp, dens; 
-        in >> w >> h >> dp >> dens;
+        if (!(in >> w >> h >> dp >> dens))
+        {
+            throw std::invalid_argument("error");
+        }
         return std::make_shared<CParallelepiped>(w, h, dp, dens);
     }
     case BodyType::Cone: 
     {
         double r, h, dens; 
-        in >> r >> h >> dens;
+        if (!(in >> r >> h >> dens))
+        {
+            throw std::invalid_argument("error");
+        }
         return std::make_shared<CCone>(r, h, dens);
     }
     case BodyType::Cylinder: 
     {
         double r, h, dens; 
-        in >> r >> h >> dens;
+        if (!(in >> r >> h >> dens))
+        {
+            throw std::invalid_argument("error");
+        }
         return std::make_shared<CCylinder>(r, h, dens);
     }
     case BodyType::Compound: 
     {
         int N; 
         in >> N;
-        auto compound = std::make_shared<CCompound>();
+        auto compound = std::make_shared<CCompound>(); 
         for (int i = 0; i < N; ++i) 
         {
             int idx; 
@@ -69,6 +81,24 @@ std::shared_ptr<CBody> ReadBody(std::istream& in, const std::string& cmd, const 
         }
         return compound;
     }
+    case BodyType::AddTo:
+    {
+        int compIdx, bodyIdx;
+        in >> compIdx >> bodyIdx;
+        if (compIdx < 1 || compIdx > tempList.size() ||
+            bodyIdx < 1 || bodyIdx > tempList.size())
+        {
+            throw std::out_of_range("Bad indices for AddTo");
+        }
+        // пытаемс€ добавить
+        auto cmp = std::dynamic_pointer_cast<CCompound>(tempList[compIdx - 1]);
+        if (!cmp)
+            throw std::invalid_argument("Not a compound at index " + std::to_string(compIdx));
+        cmp->AddChildBody(tempList[bodyIdx - 1]);
+        // возвращаем nullptr Ч так как мы не создаЄм нового тела
+        return nullptr;
+    }
+
     default:
         throw std::invalid_argument("Unknown command: " + cmd);
     }
@@ -92,20 +122,24 @@ void PrintResults(const CBodyManager& manager)
     }
 }
 
-void ProcessInputLoop(CBodyManager& manager, std::vector<std::shared_ptr<CBody>>& tempList) 
+void ProcessInputLoop(CBodyManager& manager) 
 {
     std::string cmd;
+    std::vector<std::shared_ptr<CBody>> tempList;
     while (std::cin >> cmd) 
     {
         try 
         {
             auto body = ReadBody(std::cin, cmd, tempList);
-            manager.AddBody(body);
-            tempList.push_back(body);
+            if (body)
+            {
+                manager.AddBody(body);
+                tempList = manager.GetBodies();
+            }
         }
         catch (const std::exception& e) 
         {
-            std::cerr << "Error processing command -" << cmd << ": " << e.what() << "\n";
+            std::cerr << "Error processing command \"" << cmd << "\": " << e.what() << "\n";
         }
     }
 }
@@ -114,10 +148,8 @@ void ProcessInputLoop(CBodyManager& manager, std::vector<std::shared_ptr<CBody>>
 int main() 
 {
     CBodyManager manager;
-    std::vector<std::shared_ptr<CBody>> tempList;
-    std::string cmd;
 
-    ProcessInputLoop(manager, tempList);
+    ProcessInputLoop(manager);
     PrintResults(manager);
 
     return 0;

@@ -11,6 +11,7 @@ public:
     void PrintAll() const;
     std::shared_ptr<CBody> FindMaxMass() const;
     std::shared_ptr<CBody> FindMinWeightInWater() const;
+    std::vector<std::shared_ptr<CBody>> GetBodies() const;
 private:
     std::vector<std::shared_ptr<CBody>> m_bodies;
 };

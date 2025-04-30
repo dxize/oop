@@ -9,11 +9,11 @@ public:
 	Function(const std::string& name, std::vector<std::string>& variables, const std::string& operation) :
 		m_name(name), m_variables(variables), m_operation(operation), m_found(true) {}
 
-	void SetSign(std::string operation);
+	void SetSign(std::string operation); //убрать
 
 	std::string GetSign();
 
-	void SetVars(std::vector<std::string> variables);
+	void SetVars(std::vector<std::string> variables);//убрать
 	std::vector<std::string> GetVars();
 
 private:

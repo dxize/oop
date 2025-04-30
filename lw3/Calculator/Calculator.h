@@ -25,7 +25,7 @@ public:
 private:
 	std::unordered_map<std::string, Variable> m_variables;
 	std::unordered_map<std::string, Function> m_functions;
-	std::unordered_map<std::string, double> m_cache;
+	std::unordered_map<std::string, double> m_cache; //закешировать луччше на уровне функции
 
 	bool EnsureFnExists(const std::string& name);
 	void ParseFnExpression(const std::string& name, const std::string& value,

@@ -235,7 +235,7 @@ std::string Calc::SortFns()
     return oss.str();
 }
 
-double Calc::Evaluate(const std::string& name)
+double Calc::Evaluate(const std::string& name) //лучше расчёт перекинуть в функции 
 {
     
     auto cache = m_cache.find(name);

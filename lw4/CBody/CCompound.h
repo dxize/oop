@@ -3,7 +3,7 @@
 #include <vector>
 #include <memory>
 
-class CCompound : public CBody 
+class CCompound : public CBody, public std::enable_shared_from_this<CCompound>
 {
 public:
     CCompound();
@@ -17,4 +17,5 @@ public:
 private:
     std::vector<std::shared_ptr<CBody>> m_bodies;
     bool Contains(const std::shared_ptr<CBody>& target) const;
+    std::string ToStringImpl(int indent) const;
 };

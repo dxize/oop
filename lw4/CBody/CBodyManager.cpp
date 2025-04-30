@@ -6,6 +6,11 @@
 #include <stdexcept>
 
 
+std::vector<std::shared_ptr<CBody>> CBodyManager::GetBodies() const
+{
+    return m_bodies;
+}
+
 void CBodyManager::AddBody(const std::shared_ptr<CBody>& body) 
 {
     if (body == nullptr) 
