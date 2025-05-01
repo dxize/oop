@@ -1,0 +1,10 @@
+﻿  CCircle.cpp
+  CLineSegment.cpp
+  CRectangle.cpp
+  CShapeManager.cpp
+C:\Program Files\Microsoft Visual Studio\2022\Professional\VC\Tools\MSVC\14.41.34120\include\optional(11): warning STL4038: The contents of <optional> are available only with C++17 or later.
+  CTriangle.cpp
+  main.cpp
+C:\Program Files\Microsoft Visual Studio\2022\Professional\VC\Tools\MSVC\14.41.34120\include\optional(11): warning STL4038: The contents of <optional> are available only with C++17 or later.
+  Создание кода...
+  VarTwo.vcxproj -> C:\Users\gimps\oop\lw4\VarTwo\x64\Debug\VarTwo.exe

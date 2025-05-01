@@ -11,8 +11,7 @@ public:
         uint32_t outlineColor, uint32_t fillColor)
         : m_center(center)
         , m_radius(radius)
-        , m_outlineColor(outlineColor)
-        , m_fillColor(fillColor)
+        , ISolidShape(outlineColor, fillColor)
     {}
 
     double GetArea() const override;
@@ -27,6 +26,4 @@ public:
 private:
     CPoint   m_center;
     double   m_radius;
-    uint32_t m_outlineColor;
-    uint32_t m_fillColor;
 };

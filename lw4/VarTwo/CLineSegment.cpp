@@ -3,6 +3,12 @@
 #include <sstream>
 #include <iomanip>
 
+
+double CLineSegment::GetArea() const
+{
+    return 0.0;
+}
+
 double CLineSegment::GetPerimeter() const
 {
 	double result = sqrt(pow(m_end.x - m_start.x, 2) + pow(m_end.y - m_start.y, 2));
@@ -14,12 +20,12 @@ uint32_t CLineSegment::GetOutlineColor() const
 	return m_outlineColor;
 }
 
-CPoint CLineSegment::GetStartPoint()
+CPoint CLineSegment::GetStartPoint() const
 {
 	return m_start;
 }
 
-CPoint CLineSegment::GetEndPoint()
+CPoint CLineSegment::GetEndPoint() const
 {
 	return m_end;
 }

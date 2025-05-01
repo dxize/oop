@@ -11,8 +11,7 @@ public:
                uint32_t outlineColor, uint32_t fillColor)
         : m_leftTop(topLeft)
         , m_rightBottom(bottomRight)
-        , m_outlineColor(outlineColor)
-        , m_fillColor(fillColor)
+        , ISolidShape(outlineColor, fillColor)
     {}
 
     double GetArea() const override;
@@ -29,6 +28,4 @@ public:
 private:
     CPoint   m_leftTop;
     CPoint   m_rightBottom;
-    uint32_t m_outlineColor;
-    uint32_t m_fillColor;
 };
