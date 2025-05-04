@@ -64,3 +64,19 @@ std::string CTriangle::ToString() const
         << "  Fill color: #" << std::hex << std::setw(6) << std::setfill('0') << m_fillColor;
     return ss.str();
 }
+
+void CTriangle::Draw(ICanvas& canvas) const 
+{
+    // Создаем вектор точек треугольника
+    std::vector<CPoint> points = { m_vertex1, m_vertex2, m_vertex3 };
+
+    // Рисуем контур треугольника цветом outlineColor
+    for (size_t i = 0; i < points.size(); ++i) 
+    {
+        size_t nextIndex = (i + 1) % points.size();
+        canvas.DrawLine(points[i], points[nextIndex], m_outlineColor);
+    }
+
+    // Заливаем треугольник цветом fillColor
+    canvas.FillPolygon(points, m_fillColor);
+}

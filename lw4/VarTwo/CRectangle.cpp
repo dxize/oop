@@ -56,3 +56,24 @@ std::string CRectangle::ToString() const
         << "  Fill color: #" << std::hex << std::setw(6) << std::setfill('0') << m_fillColor;
     return ss.str();
 }
+
+void CRectangle::Draw(ICanvas& canvas) const
+{
+    // Получаем все вершины прямоугольника
+    std::vector<CPoint> points = {
+        m_leftTop,
+        CPoint{m_leftTop.x + GetWidth(), m_leftTop.y},
+        GetRightBottom(),
+        CPoint{m_leftTop.x, m_leftTop.y + GetHeight()}
+    };
+
+    // Рисуем контур, соединяя вершины линиями
+    for (size_t i = 0; i < points.size(); ++i)
+    {
+        size_t nextIndex = (i + 1) % points.size();
+        canvas.DrawLine(points[i], points[nextIndex], m_outlineColor);
+    }
+
+    // Заливаем прямоугольник
+    canvas.FillPolygon(points, m_fillColor);
+}

@@ -11,7 +11,7 @@
 
 enum class ShapeType { Line, Circle, Triangle, Rectangle, Unknown };
 
-static ShapeType ParseShapeType(const std::string& s)
+ShapeType ParseShapeType(const std::string& s)
 {
     if (s == "line")      return ShapeType::Line;
     if (s == "circle")    return ShapeType::Circle;
@@ -20,7 +20,7 @@ static ShapeType ParseShapeType(const std::string& s)
     return ShapeType::Unknown;
 }
 
-static std::shared_ptr<IShape> ReadShape(std::istream& in, const std::string& cmd)
+std::shared_ptr<IShape> ReadShape(std::istream& in, const std::string& cmd)
 {
     using std::stoul;
 

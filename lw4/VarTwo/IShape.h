@@ -1,8 +1,9 @@
 #pragma once
 #include <string>
 #include <cstdint>
+#include "./DrawShapes/ICanvasDrawable.h"
 
-class IShape
+class IShape: public ICanvasDrawable
 {
 public:
     explicit IShape(uint32_t outlineColor)

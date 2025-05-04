@@ -17,6 +17,8 @@ public:
     std::string ToString() const override;
     uint32_t GetOutlineColor() const;
 
+    void Draw(ICanvas& canvas) const override;
+
     CPoint GetStartPoint() const;
     CPoint GetEndPoint()   const;
 

@@ -20,6 +20,8 @@ public:
     uint32_t GetOutlineColor() const override;
     uint32_t GetFillColor() const override;
 
+    void Draw(ICanvas& canvas) const override;
+
     CPoint GetLeftTop() const;
     CPoint GetRightBottom() const;
     double GetWidth() const;

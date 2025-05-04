@@ -11,7 +11,7 @@ public:
         , m_fillColor(fillColor)  
     {}
 
-    ~ISolidShape() = default;
+    virtual ~ISolidShape() = default;
     virtual uint32_t GetFillColor() const = 0;
 
 protected:

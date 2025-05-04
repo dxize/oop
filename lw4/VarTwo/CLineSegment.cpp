@@ -40,3 +40,8 @@ std::string CLineSegment::ToString() const {
         << std::hex << std::setw(6) << std::setfill('0') << m_outlineColor;
     return ss.str();
 }
+
+void CLineSegment::Draw(ICanvas& canvas) const
+{
+    canvas.DrawLine(m_start, m_end, m_outlineColor);
+}

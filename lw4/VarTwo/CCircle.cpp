@@ -54,3 +54,9 @@ std::string CCircle::ToString() const
         << "  Fill color: #" << std::hex << std::setw(6) << std::setfill('0') << m_fillColor;
     return ss.str();
 }
+
+void CCircle::Draw(ICanvas& canvas) const
+{
+    canvas.DrawCircle(m_center, m_radius, m_outlineColor);
+    canvas.FillCircle(m_center, m_radius, m_fillColor);
+}
