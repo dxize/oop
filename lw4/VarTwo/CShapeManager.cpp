@@ -38,4 +38,5 @@ void CShapeManager::PrintAll() const
     {
         std::cout << shape->ToString() << "\n\n";
     }
+    std::cout << "\n";
 }

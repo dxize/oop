@@ -1,60 +1,71 @@
+п»ї#define _USE_MATH_DEFINES
 #include "CCanvas.h"
-#include "../CPoint.h"
 #include <GLFW/glfw3.h>
+#include <cmath>
 
-// Реализация DrawLine с const
-void CCanvas::DrawLine(CPoint from, CPoint to, uint32_t lineColor) const 
+static inline void ApplyColor(uint32_t color)
 {
-    // Код рисования линии (пример для OpenGL):
-    glColor3ub((lineColor >> 16) & 0xFF, (lineColor >> 8) & 0xFF, lineColor & 0xFF);
+    // СЂР°СЃРїР°РєРѕРІС‹РІР°РµРј 0xRRGGBB в†’ С‚СЂРё GLubyte
+    GLubyte r = static_cast<GLubyte>((color >> 16) & 0xFF);
+    GLubyte g = static_cast<GLubyte>((color >> 8) & 0xFF);
+    GLubyte b = static_cast<GLubyte>((color >> 0) & 0xFF);
+    glColor3ub(r, g, b);
+}
+
+void CCanvas::DrawLine(CPoint from, CPoint to, uint32_t lineColor) const
+{
+    ApplyColor(lineColor);
     glBegin(GL_LINES);
-    glVertex2i(from.x, from.y);
-    glVertex2i(to.x, to.y);
+    glVertex2f(static_cast<GLfloat>(from.x),
+        static_cast<GLfloat>(from.y));
+    glVertex2f(static_cast<GLfloat>(to.x),
+        static_cast<GLfloat>(to.y));
     glEnd();
 }
 
-// Реализация FillPolygon
-void CCanvas::FillPolygon(std::vector<CPoint> points, uint32_t fillColor) const 
+void CCanvas::FillPolygon(std::vector<CPoint> points, uint32_t fillColor) const
 {
-    // Код заполнения полигона (пример для OpenGL):
-    glColor3ub((fillColor >> 16) & 0xFF, (fillColor >> 8) & 0xFF, fillColor & 0xFF);
+    ApplyColor(fillColor);
     glBegin(GL_POLYGON);
-    for (const auto& point : points) 
+    for (const auto& pt : points)
     {
-        glVertex2i(point.x, point.y);
+        glVertex2f(static_cast<GLfloat>(pt.x),
+            static_cast<GLfloat>(pt.y));
     }
     glEnd();
 }
 
-// Реализация DrawCircle
-void CCanvas::DrawCircle(CPoint center, double radius, uint32_t lineColor) const 
+void CCanvas::DrawCircle(CPoint center, double radius, uint32_t lineColor) const
 {
-    // Код рисования окружности (пример для OpenGL):
-    glColor3ub((lineColor >> 16) & 0xFF, (lineColor >> 8) & 0xFF, lineColor & 0xFF);
+    ApplyColor(lineColor);
+    constexpr int segments = 360;
     glBegin(GL_LINE_LOOP);
-    for (int i = 0; i < 360; ++i) 
+    for (int i = 0; i < segments; ++i)
     {
-        float angle = i * 3.14159f / 180;
-        int x = center.x + radius * cos(angle);
-        int y = center.y + radius * sin(angle);
-        glVertex2i(x, y);
+        double theta = 2.0 * M_PI * i / segments;
+        double x = center.x + radius * std::cos(theta);
+        double y = center.y + radius * std::sin(theta);
+        glVertex2f(static_cast<GLfloat>(x),
+            static_cast<GLfloat>(y));
     }
     glEnd();
 }
 
-// Реализация FillCircle
-void CCanvas::FillCircle(CPoint center, double radius, uint32_t fillColor) const 
+void CCanvas::FillCircle(CPoint center, double radius, uint32_t fillColor) const
 {
-    // Код заполнения окружности (пример для OpenGL):
-    glColor3ub((fillColor >> 16) & 0xFF, (fillColor >> 8) & 0xFF, fillColor & 0xFF);
+    ApplyColor(fillColor);
+    constexpr int segments = 360;
     glBegin(GL_TRIANGLE_FAN);
-    glVertex2i(center.x, center.y);
-    for (int i = 0; i <= 360; ++i) 
+    // С†РµРЅС‚СЂР°Р»СЊРЅР°СЏ С‚РѕС‡РєР°
+    glVertex2f(static_cast<GLfloat>(center.x),
+        static_cast<GLfloat>(center.y));
+    for (int i = 0; i <= segments; ++i)
     {
-        float angle = i * 3.14159f / 180;
-        int x = center.x + radius * cos(angle);
-        int y = center.y + radius * sin(angle);
-        glVertex2i(x, y);
+        double theta = 2.0 * M_PI * i / segments;
+        double x = center.x + radius * std::cos(theta);
+        double y = center.y + radius * std::sin(theta);
+        glVertex2f(static_cast<GLfloat>(x),
+            static_cast<GLfloat>(y));
     }
     glEnd();
 }

@@ -1,6 +1,15 @@
+//rectangle 100 200 300 200 000000 8B4513
+//triangle 100 200 400 200 250 50 000000 8B0000
+//rectangle 200 300 100 100 000000 4682B4
+//circle 450 100 50 FFFF00 FFFF00
+//rectangle 0 400 600 100 000000 00AA00
+
 #include <iostream>
 #include <string>
 #include <memory>
+#include <fstream>
+
+#include <GLFW/glfw3.h>
 
 #include "CShapeManager.h"
 #include "IShape.h"
@@ -8,6 +17,10 @@
 #include "CCircle.h"
 #include "CTriangle.h"
 #include "CRectangle.h"
+
+#include "./DrawShapes/ICanvasDrawable.h"
+#include "./DrawShapes/ICanvas.h"
+#include "./DrawShapes/CCanvas.h"
 
 enum class ShapeType { Line, Circle, Triangle, Rectangle, Unknown };
 
@@ -83,22 +96,38 @@ std::shared_ptr<IShape> ReadShape(std::istream& in, const std::string& cmd)
     }
 }
 
-void ProcessInput(CShapeManager& manager)
+bool IsValidNameInputFile(std::ifstream& inputFile)
 {
-    std::string cmd;
-    while (std::cin >> cmd)
+    if (!inputFile)
     {
-        try
+        return false;
+    }
+
+    return true;
+}
+
+void ProcessInput(CShapeManager& manager, std::string& inputFileName)
+{
+    std::cin >> inputFileName;
+    std::ifstream inputFile(inputFileName);
+
+    if (IsValidNameInputFile(inputFile))
+    {
+        std::string cmd;
+        while (inputFile >> cmd)
         {
-            auto shape = ReadShape(std::cin, cmd);
-            manager.AddShape(shape);
-        }
-        catch (const std::exception& ex)
-        {
-            std::cerr << "Error parsing \"" << cmd << "\": "
-                << ex.what() << std::endl;
-            std::string skip;
-            std::getline(std::cin, skip);
+            try
+            {
+                auto shape = ReadShape(inputFile, cmd);
+                manager.AddShape(shape);
+            }
+            catch (const std::exception& ex)
+            {
+                std::cerr << "Error parsing \"" << cmd << "\": "
+                    << ex.what() << std::endl;
+                std::string skip;
+                std::getline(std::cin, skip);
+            }
         }
     }
 }
@@ -118,22 +147,93 @@ void PrintExtrema(const CShapeManager& manager)
     }
 }
 
+GLFWwindow* CreateApplicationWindow() {
+    if (!glfwInit()) {
+        std::cerr << "GLFW initialization failed!\n";
+        return nullptr;
+    }
+
+    GLFWwindow* window = glfwCreateWindow(800, 600, "Shapes", nullptr, nullptr);
+    if (!window) {
+        std::cerr << "Window creation failed!\n";
+        glfwTerminate();
+        return nullptr;
+    }
+
+    glfwMakeContextCurrent(window);
+    return window;
+}
+
+// 2. Настройка проекции
+void SetupProjection() {
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0, 800, 600, 0, -1, 1); // Y-axis points down
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+}
+
+void Rendering(GLFWwindow*& window, CShapeManager& manager)
+{
+    CCanvas canvas;
+
+    // 3) Цикл отрисовки
+    while (!glfwWindowShouldClose(window))
+    {
+        // очистить экран белым
+        glClearColor(1, 1, 1, 1);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        // нарисовать все фигуры
+        for (auto& shp : manager.GetShapes())
+        {
+            if (auto d = std::dynamic_pointer_cast<ICanvasDrawable>(shp))
+            {
+                d->Draw(canvas);
+            }
+        }
+
+        glfwSwapBuffers(window);
+        glfwPollEvents();
+    }
+}
+
+void DrawPic(CShapeManager& manager)
+{
+    GLFWwindow* window = CreateApplicationWindow();
+
+    if (window)
+    {
+        // Настройка OpenGL
+        SetupProjection();
+
+        Rendering(window, manager);
+
+        glfwDestroyWindow(window);
+        glfwTerminate();
+    }
+}
+
 int main()
 {
     CShapeManager manager;
+    std::string stop;
 
-    ProcessInput(manager);
-
-    if (manager.GetShapes().empty())
+    while (stop != "exit" && !std::cin.eof() && !std::cin.fail())
     {
-        std::cout << "No valid shapes provided.\n";
-        return 0;
+        ProcessInput(manager, stop);
+
+        if (manager.GetShapes().empty())
+        {
+            std::cout << "No valid forms provided or file not found.\n";
+            continue;
+        }
     }
 
     manager.PrintAll();
-    std::cout << "\n";
-
     PrintExtrema(manager);
+
+    DrawPic(manager);
 
     return 0;
 }
