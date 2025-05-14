@@ -13,3 +13,4 @@ public:
 	virtual void FillCircle(CPoint center, double radius, uint32_t fillColor) const = 0;
 	virtual ~ICanvas() = default;
 };
+	

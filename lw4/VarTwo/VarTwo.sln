@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VarTwo", "VarTwo.vcxproj", "{E1878D50-86DD-42D8-855E-46EE7B7A6DCF}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestShape", "TestShape\TestShape.vcxproj", "{C791EB3F-DCE4-4297-AE4F-E382D14E30DC}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E1878D50-86DD-42D8-855E-46EE7B7A6DCF} = {E1878D50-86DD-42D8-855E-46EE7B7A6DCF}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
