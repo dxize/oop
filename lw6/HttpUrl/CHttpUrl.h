@@ -30,7 +30,7 @@ public:
         std::string const& domain,
         std::string const& document,
         Protocol protocol,
-        unsigned short port);
+        unsigned int port);
 
     // возвращает строковое представление URL-а. Порт, являющийся стандартным для
     // выбранного протокола (80 для http и 443 для https) в эту строку
@@ -52,13 +52,18 @@ public:
     Protocol GetProtocol()const;
 
     // возвращает номер порта
-    unsigned short GetPort()const;
+    unsigned int GetPort()const;
 private:
     std::string m_domain;
     std::string m_document = "/";
     Protocol m_protocol;
-    unsigned short m_port;
+    unsigned int m_port;
 
     static bool IsValidDomain(const std::string& domain);
     static bool IsValidDocument(const std::string& document);
+
+    void ParseProtocol(std::string const& url, size_t& outPos);
+    void SplitHostAndDocument(std::string const& rest, std::string& outHostPort);
+    unsigned int ParsePort(std::string& domain, std::string const& hostPort);
+    void ValidateAndStore(std::string const& domain, unsigned int port);
 };

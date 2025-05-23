@@ -23,10 +23,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CHttpUrl.h">
+    <ClInclude Include="CUrlParsingError.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="CUrlParsingError.h">
+    <ClInclude Include="CHttpUrl.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
