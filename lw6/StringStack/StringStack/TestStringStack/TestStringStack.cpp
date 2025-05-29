@@ -2,21 +2,25 @@
 #include "../../../../catch.hpp"
 #include "CStringStack.h"
 
-TEST_CASE("ѕустой стек ведет себ€ корректно") {
+TEST_CASE("ѕустой стек ведет себ€ корректно") 
+{
     CStringStack stack;
     REQUIRE(stack.empty());
     REQUIRE(stack.size() == 0);
 
-    SECTION("top выбрасывает исключение дл€ пустого стека") {
+    SECTION("top выбрасывает исключение дл€ пустого стека") 
+    {
         REQUIRE_THROWS_AS(stack.top(), StackEmpty);
     }
 
-    SECTION("pop выбрасывает исключение дл€ пустого стека") {
+    SECTION("pop выбрасывает исключение дл€ пустого стека") 
+    {
         REQUIRE_THROWS_AS(stack.pop(), StackEmpty);
     }
 }
 
-TEST_CASE("Push и top работают корректно") {
+TEST_CASE("Push и top работают корректно") 
+{
     CStringStack stack;
     stack.push("первый");
     REQUIRE_FALSE(stack.empty());
@@ -28,7 +32,8 @@ TEST_CASE("Push и top работают корректно") {
     REQUIRE(stack.top() == "второй");
 }
 
-TEST_CASE("Pop удал€ет верхний элемент") {
+TEST_CASE("Pop удал€ет верхний элемент") 
+{
     CStringStack stack;
     stack.push("первый");
     stack.push("второй");
@@ -41,7 +46,8 @@ TEST_CASE("Pop удал€ет верхний элемент") {
     REQUIRE(stack.empty());
 }
 
-TEST_CASE(" онструктор копировани€ создает глубокую копию") {
+TEST_CASE(" онструктор копировани€ создает глубокую копию") 
+{
     CStringStack original;
     original.push("a");
     original.push("b");
@@ -55,7 +61,8 @@ TEST_CASE(" онструктор копировани€ создает глубокую копию") {
     REQUIRE(copy.top() == "b");
 }
 
-TEST_CASE("ќператор присваивани€ использует идиому copy-and-swap") {
+TEST_CASE("ќператор присваивани€ использует идиому copy-and-swap") 
+{
     CStringStack a;
     a.push("x");
     CStringStack b;
@@ -70,7 +77,8 @@ TEST_CASE("ќператор присваивани€ использует идиому copy-and-swap") {
     REQUIRE(a.top() == "z"); // не изменилс€
 }
 
-TEST_CASE(" онструктор перемещени€ передает ресурсы") {
+TEST_CASE(" онструктор перемещени€ передает ресурсы") 
+{
     CStringStack a;
     a.push("перемещено");
 
@@ -80,7 +88,8 @@ TEST_CASE(" онструктор перемещени€ передает ресурсы") {
     REQUIRE(a.empty());  // после перемещени€ источник пуст
 }
 
-TEST_CASE("ќператор перемещающего присваивани€ передает владение") {
+TEST_CASE("ќператор перемещающего присваивани€ передает владение") 
+{
     CStringStack a;
     a.push("один");
 
@@ -92,7 +101,8 @@ TEST_CASE("ќператор перемещающего присваивани€ передает владение") {
     REQUIRE(a.empty());
 }
 
-TEST_CASE("Push с перемещением работает") {
+TEST_CASE("Push с перемещением работает") 
+{
     CStringStack stack;
     std::string str = "динамический";
     stack.push(std::move(str));

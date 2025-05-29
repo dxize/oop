@@ -1,35 +1,41 @@
-#include <iostream>
-#include <string>
-#include <stdexcept>
-#include <utility>
 #include "CStringStack.h"
+#include <algorithm> 
 
 CStringStack::CStringStack() noexcept
-    : m_data(nullptr), m_size(0), m_capacity(0) {}
+    : m_data(nullptr)
+    , m_size(0)
+    , m_capacity(0)
+{}
 
 CStringStack::CStringStack(const CStringStack& other)
-    : m_data(nullptr), m_size(0), m_capacity(0) 
+    : m_data(nullptr)
+    , m_size(0)
+    , m_capacity(0)
 {
     if (other.m_size > 0) 
     {
-        std::string* tmp = allocate_and_copy(other.m_data, other.m_size, other.m_capacity);
-        m_data = tmp;
+        resize_buffer(other.m_size);
+        for (size_t i = 0; i < other.m_size; ++i) 
+        {
+            m_data[i] = other.m_data[i];  
+        }
         m_size = other.m_size;
-        m_capacity = other.m_capacity;
     }
 }
 
 CStringStack::CStringStack(CStringStack&& other) noexcept
-    : m_data(other.m_data), m_size(other.m_size), m_capacity(other.m_capacity) 
+    : m_data(other.m_data)
+    , m_size(other.m_size)
+    , m_capacity(other.m_capacity)
 {
     other.m_data = nullptr;
     other.m_size = 0;
     other.m_capacity = 0;
 }
 
-CStringStack::CStringStack::~CStringStack() noexcept 
+CStringStack::~CStringStack() noexcept
 {
-    destroy_data();
+    delete[] m_data;
 }
 
 CStringStack& CStringStack::operator=(const CStringStack& other)
@@ -46,7 +52,7 @@ CStringStack& CStringStack::operator=(CStringStack&& other) noexcept
 {
     if (this != &other) 
     {
-        destroy_data();
+        delete[] m_data;
         m_data = other.m_data;
         m_size = other.m_size;
         m_capacity = other.m_capacity;
@@ -59,40 +65,33 @@ CStringStack& CStringStack::operator=(CStringStack&& other) noexcept
 
 void CStringStack::push(const std::string& s)
 {
-    ensure_capacity(m_size + 1);
-    try
+    if (m_size == m_capacity) 
     {
-        new (&m_data[m_size]) std::string(s);
+        resize_buffer(m_capacity ? m_capacity * 2 : 1);
     }
-    catch (...)
-    {
-        throw;
-    }
-    ++m_size;
+    m_data[m_size++] = s; 
 }
 
 void CStringStack::push(std::string&& s)
 {
-    if (m_size == m_capacity)
+    if (m_size == m_capacity) 
     {
-        ensure_capacity(m_size + 1);
+        resize_buffer(m_capacity ? m_capacity * 2 : 1);
     }
-    new (&m_data[m_size]) std::string(std::move(s));
-    ++m_size;
+    m_data[m_size++] = std::move(s);
 }
 
-
-void CStringStack::pop() 
+void CStringStack::pop()
 {
     if (empty()) 
     {
         throw StackEmpty();
     }
+    m_data[m_size].clear();
     --m_size;
-    m_data[m_size].~basic_string();
 }
 
-const std::string& CStringStack::top() const 
+const std::string& CStringStack::top() const
 {
     if (empty()) 
     {
@@ -101,81 +100,46 @@ const std::string& CStringStack::top() const
     return m_data[m_size - 1];
 }
 
-bool CStringStack::empty() const noexcept 
+bool CStringStack::empty() const noexcept
 {
     return m_size == 0;
 }
 
-size_t CStringStack::size() const noexcept 
+size_t CStringStack::size() const noexcept
 {
     return m_size;
 }
 
-void CStringStack::swap(CStringStack& other) noexcept 
+void CStringStack::swap(CStringStack& other) noexcept
 {
     std::swap(m_data, other.m_data);
     std::swap(m_size, other.m_size);
     std::swap(m_capacity, other.m_capacity);
 }
 
-std::string* CStringStack::allocate_and_copy(const std::string* src, size_t size, size_t capacity)
+void CStringStack::resize_buffer(size_t newCapacity)
 {
-    std::string* buffer = static_cast<std::string*>(::operator new[](capacity * sizeof(std::string)));
+    if (newCapacity < m_size) 
+    {
+        return; 
+    }
 
-    size_t i = 0;
+    std::string* newData = nullptr;
     try 
     {
-        for (; i < size; ++i) 
-        {
-            new (&buffer[i]) std::string(src[i]);
-        }
+        newData = new std::string[newCapacity];
     }
     catch (...) 
     {
-        for (size_t j = 0; j < i; ++j)
-        {
-            buffer[j].~basic_string();
-        }
-        ::operator delete[](buffer);
         throw MemoryError();
     }
 
-    return buffer;
-}
-
-
-void CStringStack::ensure_capacity(size_t minCapacity)  //переименовать функции и одумать более / поправить форматирвоание
-{
-    if (minCapacity <= m_capacity)
+    for (size_t i = 0; i < m_size; ++i) 
     {
-        return;
+        newData[i] = std::move(m_data[i]);
     }
 
-    size_t newCap = (m_capacity == 0 ? 1 : m_capacity * 2);
-
-    if (newCap < minCapacity)
-    {
-        newCap = minCapacity;
-    }
-    std::string* newData = allocate_and_copy(m_data, m_size, newCap);
-    size_t old_size = m_size;
-    destroy_data();
+    delete[] m_data;
     m_data = newData;
-    m_size = old_size;
-    m_capacity = newCap;
-}
-
-void CStringStack::destroy_data() noexcept 
-{   
-    if (m_data) 
-    {
-        for (size_t i = 0; i < m_size; ++i) 
-        {
-            m_data[i].~basic_string();
-        }
-        ::operator delete[](m_data);
-    }
-    m_data = nullptr;
-    m_size = 0;
-    m_capacity = 0;
+    m_capacity = newCapacity;
 }

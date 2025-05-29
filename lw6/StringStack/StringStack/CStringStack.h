@@ -1,17 +1,20 @@
 #pragma once
+
 #include <string>
+#include <exception>
+#include <utility>
 
-struct StackEmpty : public std::exception 
+struct StackEmpty : public std::exception
 {
     const char* what() const noexcept override;
 };
 
-struct MemoryError : public std::bad_alloc 
+struct MemoryError : public std::bad_alloc
 {
     const char* what() const noexcept override;
 };
 
-class CStringStack 
+class CStringStack
 {
 public:
     CStringStack() noexcept;
@@ -32,13 +35,9 @@ public:
     void swap(CStringStack& other) noexcept;
 
 private:
-    std::string* m_data = nullptr;
-    size_t m_size = 0;
-    size_t m_capacity = 0;
+    std::string* m_data;
+    size_t       m_size;
+    size_t       m_capacity;
 
-    static std::string* allocate_and_copy(const std::string* src, size_t count, size_t capacity);
-
-    void ensure_capacity(size_t minCapacity);
-
-    void destroy_data() noexcept;
+    void resize_buffer(size_t newCapacity);
 };
