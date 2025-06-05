@@ -36,8 +36,8 @@ public:
 
 private:
     std::string* m_data;
-    size_t       m_size;
-    size_t       m_capacity;
+    size_t  m_size;
+    size_t  m_capacity;
 
     void resize_buffer(size_t newCapacity);
 };

@@ -168,7 +168,7 @@ GLFWwindow* CreateApplicationWindow() {
 void SetupProjection() {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(0, 800, 600, 0, -1, 1); // Y-axis points down
+    glOrtho(0, 800, 600, 0, -1, 1); 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 }

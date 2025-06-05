@@ -46,7 +46,7 @@ TEST_CASE("Pop удаляет верхний элемент")
     REQUIRE(stack.empty());
 }
 
-TEST_CASE("Конструктор копирования создает глубокую копию") 
+TEST_CASE("Конструктор копирования создает копию") 
 {
     CStringStack original;
     original.push("a");
@@ -56,12 +56,11 @@ TEST_CASE("Конструктор копирования создает глубокую копию")
     REQUIRE(copy.size() == 2);
     REQUIRE(copy.top() == "b");
 
-    // Изменения оригинала не должны повлиять на копию
     original.pop();
     REQUIRE(copy.top() == "b");
 }
 
-TEST_CASE("Оператор присваивания использует идиому copy-and-swap") 
+TEST_CASE("Оператор присваивания копирует данные") 
 {
     CStringStack a;
     a.push("x");
@@ -74,7 +73,7 @@ TEST_CASE("Оператор присваивания использует идиому copy-and-swap")
     REQUIRE(a.top() == "z");
 
     b.pop();
-    REQUIRE(a.top() == "z"); // не изменился
+    REQUIRE(a.top() == "z"); 
 }
 
 TEST_CASE("Конструктор перемещения передает ресурсы") 
@@ -85,7 +84,7 @@ TEST_CASE("Конструктор перемещения передает ресурсы")
     CStringStack b(std::move(a));
     REQUIRE(b.size() == 1);
     REQUIRE(b.top() == "перемещено");
-    REQUIRE(a.empty());  // после перемещения источник пуст
+    REQUIRE(a.empty());  
 }
 
 TEST_CASE("Оператор перемещающего присваивания передает владение") 
@@ -107,4 +106,4 @@ TEST_CASE("Push с перемещением работает")
     std::string str = "динамический";
     stack.push(std::move(str));
     REQUIRE(stack.top() == "динамический");
-}
+}//добавить тесты

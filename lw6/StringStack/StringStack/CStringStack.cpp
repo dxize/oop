@@ -14,7 +14,7 @@ CStringStack::CStringStack(const CStringStack& other)
 {
     if (other.m_size > 0) 
     {
-        resize_buffer(other.m_size);
+        resize_buffer(other.m_size);//изменить под аперкемел кейс
         for (size_t i = 0; i < other.m_size; ++i) 
         {
             m_data[i] = other.m_data[i];  
